@@ -1,28 +1,36 @@
+const fs = require('fs');
 const Discord = require('discord.js');
 require('dotenv').config()
 
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
+const prefix = '04';
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.name, command);
+}
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', msg => {
-    if (msg.content.startsWith('04 D')) {
-        let out = '';
-        msg.content.substr(4).split("D").forEach(element => {
-            let dice = getRandomInt(element);
-            if (isNaN(dice) || msg.content.substr(4) < 2) dice = 'O^O';
-            out = out.concat(dice, ' ');
-        })
-        msg.reply(out)
-            .catch(console.error);
+client.on('message', message => {
+    if (!(message.content.startsWith(prefix)) || message.author.bot) return;
+    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
+
+    if (!client.commands.has(command)) return;
+
+    try {
+        client.commands.get(command).execute(message, args, client);
+    } catch (error) {
+        console.error(error);
+        message.reply('there was an error trying to execute that command!').catch(console.error);
     }
 });
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max)) + 1;
-}
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
     console.log(`Discord bot Rinze Started!`);
