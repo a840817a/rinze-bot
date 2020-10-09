@@ -22,4 +22,4 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max)) + 1;
   }
 
-client.login('NjU1MzM1ODYzMTEwMDc0MzY5.XfSnFQ.OI08EjygJx_FzSjr0_eTmiWdEHE');
+client.login(process.env.DISCORD_BOT_TOKEN);
