@@ -1,13 +1,13 @@
 const Joi = require('joi');
 const diceSchema = Joi.number().integer().min(2)
-const schema = Joi.alternatives().try(diceSchema, Joi.string().regex(/(\dd)\d*/));
+const schema = Joi.alternatives().try(diceSchema, Joi.string().regex(/(\d[dD])\d*/));
 
 module.exports = {
     name: 'dice',
     description: 'Roll dice!',
     execute(message, args) {
         let out = '';
-        let seirika0v0 = message.client.emojis.cache.get('647072487397392385');
+        let seirika0v0 = message.client.emojis.cache.get('647072487397392385').toString();
         console.log(seirika0v0.toString());
         if (args.length > 10) {
             out = out.concat(seirika0v0, '\n');
@@ -20,7 +20,6 @@ module.exports = {
                 let input = element.toLowerCase().split('d');
                 let count = 1;
                 let type;
-                let dices = [];
                 if (input.length === 2) {
                     count = input[0];
                     type = input[1];
@@ -29,19 +28,14 @@ module.exports = {
                     out = out.concat(seirika0v0, '\n');
                     return false;
                 }
+                let sum = 0;
+                let result;
                 for (let i = 0; i < count; i++) {
-                    dices.push(getDiceString(type));
+                    result = getDiceString(type)
+                    sum += result;
+                    out = out.concat(result, ' ');
                 }
-                if (dices.length > 1) {
-                    let sum = 0;
-                    let preFix = '';
-                    dices.forEach(num => {
-                        sum += num;
-                        out = out.concat(preFix, ' ', num);
-                        preFix = ' +';
-                    })
-                    out = out.concat(' = ', sum);
-                } else out = out.concat(dices[0]);
+                if (count > 1) out = out.concat('(Total is : ', sum.toString(), ')\n');
                 out = out.concat('\n');
                 return true;
             })
