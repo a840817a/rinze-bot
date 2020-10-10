@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
-const prefix = '04';
+const prefix = process.env.PREFIX || '04';
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
