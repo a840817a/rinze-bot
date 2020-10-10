@@ -4,7 +4,11 @@ const schema = Joi.alternatives().try(diceSchema, Joi.string().regex(/(\d[dD])\d
 
 module.exports = {
     name: 'dice',
+    aliases: ['d'],
     description: 'Roll dice!',
+    guildOnly: false,
+    args: false,
+    usage: '<user> <role>',
     execute(message, args) {
         let out = '';
         let seirika0v0 = message.client.emojis.cache.get('647072487397392385').toString();
