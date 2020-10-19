@@ -1,3 +1,7 @@
+language: node_js
+os: linux
+dist: xenial
+
 services:
   - docker
 
