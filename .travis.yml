@@ -1,0 +1,10 @@
+services:
+  - docker
+
+before_script:
+  - wget -qO- https://toolbelt.heroku.com/install.sh | sh
+  - docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
+
+script:
+  - heroku container:push bot --app=$HEROKU_APP_NAME
+  - heroku container:release bot --app=$HEROKU_APP_NAME

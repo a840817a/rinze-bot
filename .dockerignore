@@ -1,6 +1,7 @@
 .git
 .gitignore
 .vscode
+.travis.yml
 node_modules
 build
 npm-debug.log

@@ -39,7 +39,7 @@ module.exports = {
                     sum += result;
                     out = out.concat(result, ' ');
                 }
-                if (count > 1) out = out.concat('(Total is : ', sum.toString(), ')\n');
+                if (count > 1) out = out.concat('(Total is : ', sum.toString(), ')');
                 out = out.concat('\n');
                 return true;
             })
