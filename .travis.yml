@@ -2,8 +2,8 @@ services:
   - docker
 
 before_script:
-  - wget -qO- https://toolbelt.heroku.com/install.sh | sh
-  - docker login --username=$HEROKU_USERNAME --password=$HEROKU_API_KEY registry.heroku.com
+  - curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+  - echo "$HEROKU_API_KEY" | docker login --username=$HEROKU_USERNAME --password-stdin registry.heroku.com
 
 script:
   - heroku container:push bot --app=$HEROKU_APP_NAME
