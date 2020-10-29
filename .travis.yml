@@ -5,10 +5,15 @@ dist: xenial
 services:
   - docker
 
-before_script:
+before_deploy:
   - curl https://cli-assets.heroku.com/install.sh | sh
   - echo "$HEROKU_API_KEY" | docker login --username=$HEROKU_USERNAME --password-stdin registry.heroku.com
+  - echo "$JFROG_PASSWORD" | docker login --username=$JFROG_USERNAME --password-stdin $JFROG_URL
 
-script:
-  - heroku container:push bot --app=$HEROKU_APP_NAME
-  - heroku container:release bot --app=$HEROKU_APP_NAME
+deploy:
+  - provider: script
+    script: docker image build -t $JFROG_URL/docker/$JFROG_APP_NAME && docker push $JFROG_URL/docker/$JFROG_APP_NAME
+  - provider: script
+    script: heroku container:push bot --app=$HEROKU_APP_NAME && heroku container:release bot --app=$HEROKU_APP_NAME
+    on:
+      branch: release
