@@ -1,6 +1,6 @@
 # rinze-bot
 deploy to Heroku status
-![travis status](https://travis-ci.org/a840817a/rinze-bot.svg?branch=master)
+![travis status](https://travis-ci.com/a840817a/rinze-bot.svg?branch=release)
 
 
 use follow command to start
