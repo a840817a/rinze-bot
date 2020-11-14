@@ -9,9 +9,9 @@ module.exports = {
     usage: '<dice>',
     execute(message, args) {
         let out = '';
-        let seirika0v0 = message.client.emojis.cache.get('647072487397392385').toString();
+        let serika0v0 = message.client.emojis.cache.get('647072487397392385').toString() || '0 ^ 0';
         if (args.length > 10) {
-            out = out.concat(seirika0v0, '\n');
+            out = out.concat(serika0v0, '\n');
         } else {
             console.log(args);
             args.forEach(element => {
@@ -19,7 +19,7 @@ module.exports = {
                     out = out.concat(dice.roll(element), '\n');
                 } catch (e) {
                     console.log(e);
-                    out = out.concat(seirika0v0, '\n');
+                    out = out.concat(serika0v0, '\n');
                 }
             })
         }
