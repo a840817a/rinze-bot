@@ -2,8 +2,8 @@ const dice = require('../helper/dice');
 
 module.exports = {
     name: 'roll',
-    aliases: ['roll', 'd', 'r'],
-    description: 'Roll roll!',
+    aliases: ['dice', 'd', 'r'],
+    description: 'Roll dice!',
     guildOnly: false,
     args: true,
     usage: '<dice>',
