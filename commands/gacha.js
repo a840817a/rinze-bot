@@ -41,8 +41,8 @@ function updateMessage(message, place, result, ssrOdds, srOdds, back, ssr, sr, r
         for (let i = 0; i < 10; i++) {
             let res = r;
             if (i === 9) res = sr;
-            if (result[i] < ssrOdds) res = ssr
-            else if (result[i] < srOdds) res = sr;
+            if (result[i] <= ssrOdds) res = ssr
+            else if (result[i] <= ssrOdds + srOdds) res = sr;
 
             if (i === 5) out = out.concat('\n');
             if (i < place)  out = out.concat(res + ' ')
