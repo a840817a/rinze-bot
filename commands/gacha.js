@@ -7,10 +7,10 @@ module.exports = {
     usage: '',
     execute(message, args) {
         let out = '';
-        const back = '[...]';
-        const ssr = '[SSR]';
-        const sr = '[SR]';
-        const r = '[R]';
+        const back = message.client.emojis.cache.get('806963453142630491').toString() || '[...]';
+        const ssr = message.client.emojis.cache.get('806963921609031700').toString() || '[SSR]';
+        const sr = message.client.emojis.cache.get('806963886229946419').toString() || '[SR]';
+        const r = message.client.emojis.cache.get('806963849084665927').toString() || '[R]';
 
         const ssrOdds = args[0] * 1.0 / 100 || 0.03;
         const srOdds = args[1] * 1.0 / 100 || 0.12;
