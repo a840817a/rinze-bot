@@ -17,7 +17,7 @@ module.exports = {
         let sum = 0;
         let result;
         for (let i = 0; i < count; i++) {
-            result = getDiceString(type)
+            result = getDiceString(type);
             sum += result;
             out = out.concat(result, ' ');
         }
