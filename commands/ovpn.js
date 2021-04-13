@@ -9,7 +9,7 @@ module.exports = {
     usage: '',
     execute(message, args) {
         vpn.downloadData().then((vpnGate) => {
-            const list = vpnGate.filter(vpn => vpn.CountryShort === "jp");
+            const list = vpnGate.filter(vpn => vpn.CountryShort === "JP");
 
             const bySpeed = list.sort((a, b) => b.Speed - a.Speed)[0];
             let byScore = list.sort((a, b) => b.Score - a.Score);
