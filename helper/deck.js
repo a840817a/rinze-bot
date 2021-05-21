@@ -96,6 +96,7 @@ async function buildDeckImage(deckImageList, out) {
 }
 
 async function joinImageHorizontal(left, right, out) {
+    console.log('building ' + out);
     const a = path.resolve(tempPath, 'building/a.png');
     const b = path.resolve(tempPath, 'building/b.png');
 
@@ -135,6 +136,7 @@ async function joinImageHorizontal(left, right, out) {
 }
 
 async function joinImageVertical(up, down, out) {
+    console.log('building ' + out);
     const a = path.resolve(tempPath, 'building/a.png');
     const b = path.resolve(tempPath, 'building/b.png');
 
@@ -187,6 +189,7 @@ module.exports = {
                 await downloadDeck(data.sub_list, data.game_title_id, subDeckImageList);
             }
             await buildDeckImage(deckImageList, 'deck-' + id.toUpperCase() + '.png');
+            console.log('uploading image...');
             let deck = await firebase.storage().upload('deck-' + id.toUpperCase() + '.png', {
                 destination: 'deck/deck-' + id.toUpperCase() + '.png',
             })
