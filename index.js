@@ -2,6 +2,8 @@ const fs = require('fs');
 const Discord = require('discord.js');
 require('dotenv').config();
 
+const firebase = require('./helper/firebase');
+
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const prefix = process.env.PREFIX || '04';
@@ -14,6 +16,7 @@ for (const file of commandFiles) {
 }
 
 client.on('ready', () => {
+    firebase.init();
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
