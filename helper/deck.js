@@ -73,20 +73,21 @@ async function downloadDeck(deck, game_title_id, deckImageList) {
 
 async function buildDeckImage(deckImageList, out) {
     for (let i = 1; i < deckImageList.length; i++) {
-        let currentImage = path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '.png');
+        let currentImage = path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '-' + out);
         if (i % 10 === 0) continue;
         if (i % 10 === 1) currentImage = deckImageList[i - 1]
         await joinImageHorizontal(
             currentImage,
             deckImageList[i],
-            path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '.png')
+            path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '-' + out),
+            out
         );
     }
-    await fs.copyFileSync(path.resolve(tempPath, 'building/row0.png'), out, fs.constants.COPYFILE_FICLONE);
+    await fs.copyFileSync(path.resolve(tempPath, 'building/row0' + '-' + out), out, fs.constants.COPYFILE_FICLONE);
     for (let i = 1; i < deckImageList.length / 10; i++) {
-        const currentImage = path.resolve(tempPath, 'building/row' + i + '.png');
+        const currentImage = path.resolve(tempPath, 'building/row' + i + '-' + out);
         let perImage = out
-        if (i === 0) perImage = path.resolve(tempPath, 'building/row0.png');
+        if (i === 0) perImage = path.resolve(tempPath, 'building/row0' + '-' + out);
         await joinImageVertical(
             perImage,
             currentImage,
@@ -95,20 +96,19 @@ async function buildDeckImage(deckImageList, out) {
     }
 }
 
-async function joinImageHorizontal(left, right, out) {
-    console.log('building ' + out);
-    const a = path.resolve(tempPath, 'building/a.png');
-    const b = path.resolve(tempPath, 'building/b.png');
+async function joinImageHorizontal(left, right, out, id) {
+    const l = path.resolve(tempPath, 'building/l-' + id);
+    const r = path.resolve(tempPath, 'building/r-' + id);
 
-    if (!fs.existsSync(path.dirname(a))) {
-        fs.mkdirSync(path.dirname(a), {recursive: true});
+    if (!fs.existsSync(path.dirname(l))) {
+        fs.mkdirSync(path.dirname(l), {recursive: true});
     }
 
-    await fs.copyFileSync(left, a, fs.constants.COPYFILE_FICLONE);
-    await fs.copyFileSync(right, b, fs.constants.COPYFILE_FICLONE);
+    await fs.copyFileSync(left, l, fs.constants.COPYFILE_FICLONE);
+    await fs.copyFileSync(right, r, fs.constants.COPYFILE_FICLONE);
 
-    const leftData = await sharp(a).metadata();
-    const rightData = await sharp(b).metadata();
+    const leftData = await sharp(l).metadata();
+    const rightData = await sharp(r).metadata();
 
     const img = await sharp({
         create: {
@@ -118,36 +118,35 @@ async function joinImageHorizontal(left, right, out) {
             background: {r: 0, g: 0, b: 0, alpha: 0}
         }
     }).composite([{
-        input: a,
+        input: l,
         blend: 'add',
         top: 0,
         left: 0
     }, {
-        input: b,
+        input: r,
         blend: 'add',
         top: 0,
         left: leftData.width
     }]).toFile(out);
 
-    await fs.unlinkSync(a);
-    await fs.unlinkSync(b);
+    await fs.unlinkSync(l);
+    await fs.unlinkSync(r);
 
     return img;
 }
 
 async function joinImageVertical(up, down, out) {
-    console.log('building ' + out);
-    const a = path.resolve(tempPath, 'building/a.png');
-    const b = path.resolve(tempPath, 'building/b.png');
+    const u = path.resolve(tempPath, 'building/u-' + out);
+    const d = path.resolve(tempPath, 'building/d-' + out);
 
-    if (!fs.existsSync(path.dirname(a))) {
-        fs.mkdirSync(path.dirname(a), {recursive: true});
+    if (!fs.existsSync(path.dirname(u))) {
+        fs.mkdirSync(path.dirname(u), {recursive: true});
     }
 
-    fs.copyFileSync(up, a, fs.constants.COPYFILE_FICLONE);
-    fs.copyFileSync(down, b, fs.constants.COPYFILE_FICLONE);
-    const leftData = await sharp(a).metadata();
-    const rightData = await sharp(b).metadata();
+    fs.copyFileSync(up, u, fs.constants.COPYFILE_FICLONE);
+    fs.copyFileSync(down, d, fs.constants.COPYFILE_FICLONE);
+    const leftData = await sharp(u).metadata();
+    const rightData = await sharp(d).metadata();
 
     const img = await sharp({
         create: {
@@ -157,19 +156,19 @@ async function joinImageVertical(up, down, out) {
             background: {r: 0, g: 0, b: 0, alpha: 0}
         }
     }).composite([{
-        input: a,
+        input: u,
         blend: 'add',
         top: 0,
         left: 0
     }, {
-        input: b,
+        input: d,
         blend: 'add',
         top: leftData.height,
         left: 0
     }]).toFile(out);
 
-    await fs.unlinkSync(a);
-    await fs.unlinkSync(b);
+    await fs.unlinkSync(u);
+    await fs.unlinkSync(d);
 
     return img;
 }
@@ -189,7 +188,6 @@ module.exports = {
                 await downloadDeck(data.sub_list, data.game_title_id, subDeckImageList);
             }
             await buildDeckImage(deckImageList, 'deck-' + id.toUpperCase() + '.png');
-            console.log('uploading image...');
             let deck = await firebase.storage().upload('deck-' + id.toUpperCase() + '.png', {
                 destination: 'deck/deck-' + id.toUpperCase() + '.png',
             })
