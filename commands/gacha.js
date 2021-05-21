@@ -45,7 +45,7 @@ function updateMessage(message, place, result, ssrOdds, srOdds, back, ssr, sr, r
             else if (result[i] <= ssrOdds + srOdds) res = sr;
 
             if (i === 5) out = out.concat('\n');
-            if (i < place)  out = out.concat(res + ' ')
+            if (i < place) out = out.concat(res + ' ')
             else out = out.concat(back + ' ');
         }
         message.edit(out)
