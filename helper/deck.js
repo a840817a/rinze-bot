@@ -6,7 +6,6 @@ const cheerio = require('cheerio')
 
 const firebase = require('../helper/firebase');
 
-
 const tempPath = 'temp'
 
 const gameName = [
@@ -56,7 +55,7 @@ async function downloadCard(type, card, rotate = false, force) {
     const imageTempPath = path.resolve(tempPath, gamePath[type], card.card_number.replace('/', '_') + '.png');
 
     if (force || !fs.existsSync(imageTempPath)) {
-        // console.log('Downloading ' + gamePath[type] + ' card ' + card.name);
+        console.log('Downloading ' + gamePath[type] + ' card ' + card.name);
         try {
             let res = await axios.get(imagePrefix[type] + card.img, {responseType: 'arraybuffer'});
             let image = sharp(res.data);
@@ -88,7 +87,7 @@ async function downloadDeck(deck, game_title_id, deckImageList) {
 }
 
 async function buildDeckImage(deckImageList, out) {
-    // console.log(deckImageList);
+    console.log(deckImageList);
     for (let i = 1; i < deckImageList.length; i++) {
         let currentImage = path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '-' + out);
         if (i % 10 === 0) continue;
@@ -127,7 +126,7 @@ async function joinImageHorizontal(left, right, out, id) {
     const leftData = await sharp(l).metadata();
     const rightData = await sharp(r).metadata();
 
-    const img = await sharp({
+    await sharp({
         create: {
             width: leftData.width + rightData.width,
             height: Math.max(leftData.height, rightData.height),
@@ -149,7 +148,7 @@ async function joinImageHorizontal(left, right, out, id) {
     await fs.unlinkSync(l);
     await fs.unlinkSync(r);
 
-    return img;
+    // return img;
 }
 
 async function joinImageVertical(up, down, out) {
@@ -162,13 +161,13 @@ async function joinImageVertical(up, down, out) {
 
     fs.copyFileSync(up, u, fs.constants.COPYFILE_FICLONE);
     fs.copyFileSync(down, d, fs.constants.COPYFILE_FICLONE);
-    const leftData = await sharp(u).metadata();
-    const rightData = await sharp(d).metadata();
+    const upData = await sharp(u).metadata();
+    const downData = await sharp(d).metadata();
 
-    const img = await sharp({
+    await sharp({
         create: {
-            width: Math.max(leftData.width, rightData.width),
-            height: leftData.height + rightData.height,
+            width: Math.max(upData.width, downData.width),
+            height: upData.height + downData.height,
             channels: 4,
             background: {r: 0, g: 0, b: 0, alpha: 0}
         }
@@ -180,14 +179,14 @@ async function joinImageVertical(up, down, out) {
     }, {
         input: d,
         blend: 'add',
-        top: leftData.height,
+        top: upData.height,
         left: 0
     }]).toFile(out);
 
     await fs.unlinkSync(u);
     await fs.unlinkSync(d);
 
-    return img;
+    // return img;
 }
 
 function deleteTemp(id) {
@@ -207,12 +206,13 @@ module.exports = {
         if (data.deck_id !== undefined) {
             data['gameTitle'] = gameName[data.game_title_id]
             console.log('Found ' + data.gameTitle + ' deck ' + data.title);
-            // console.log('Deck list :');
+            console.log(data);
+            console.log('Deck list :');
             let deckImageList = [];
             await downloadDeck(data.list, data.game_title_id, deckImageList);
             let subDeckImageList = [];
             if (data.sub_list.length > 0) {
-                // console.log('Sub deck list :');
+                console.log('Sub deck list :');
                 await downloadDeck(data.sub_list, data.game_title_id, subDeckImageList);
             }
             await buildDeckImage(deckImageList, 'deck-' + id.toUpperCase() + '.png');
