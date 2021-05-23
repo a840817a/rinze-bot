@@ -36,6 +36,15 @@ const imagePrefix = [
     'https://s3-ap-northeast-1.amazonaws.com/rebirth-fy.com/wordpress/wp-content/images/cardlist/'
 ]
 
+const tempImageList = [
+    'row0-deck-',
+    'row1-deck-',
+    'row2-deck-',
+    'row3-deck-',
+    'row4-deck-',
+    'row0-subDeck-',
+]
+
 async function downloadDeckData(id) {
     let res = await axios.post('https://decklog.bushiroad.com/system/app/api/view/' + id, {},
         {"headers": {"Referer": "https://decklog.bushiroad.com/view/" + id}});
@@ -47,17 +56,20 @@ async function downloadCard(type, card, rotate = false, force) {
     const imageTempPath = path.resolve(tempPath, gamePath[type], card.card_number.replace('/', '_') + '.png');
 
     if (force || !fs.existsSync(imageTempPath)) {
-        console.log('Downloading ' + gamePath[type] + ' card ' + card.name);
-        let res = await axios.get(imagePrefix[type] + card.img, {responseType: 'arraybuffer'});
-        let image = sharp(res.data);
+        // console.log('Downloading ' + gamePath[type] + ' card ' + card.name);
+        try {
+            let res = await axios.get(imagePrefix[type] + card.img, {responseType: 'arraybuffer'});
+            let image = sharp(res.data);
 
-        if (rotate && card.direction === 1) image.rotate(90);
+            if (rotate && card.direction === 1) image.rotate(90);
 
-        if (!fs.existsSync(path.dirname(imageTempPath))) {
-            fs.mkdirSync(path.dirname(imageTempPath), {recursive: true});
+            if (!fs.existsSync(path.dirname(imageTempPath))) {
+                fs.mkdirSync(path.dirname(imageTempPath), {recursive: true});
+            }
+            return image.toFile(imageTempPath);
+        } catch (e) {
+            throw e.response.data.error
         }
-
-        return image.toFile(imageTempPath);
     } else {
         console.log('Already downloaded, skipping ' + gamePath[type] + ' card ' + card.name);
     }
@@ -67,11 +79,16 @@ async function downloadDeck(deck, game_title_id, deckImageList) {
     for (let card of deck) {
         // console.log(card.card_kind + ' card ' + card.name + ' X ' + card.num);
         for (let i = 0; i < card.num; i++) deckImageList.push(path.resolve(tempPath, gamePath[game_title_id], card.card_number.replace('/', '_') + '.png'));
-        await downloadCard(game_title_id, card, true);
+        try {
+            await downloadCard(game_title_id, card, true);
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 
 async function buildDeckImage(deckImageList, out) {
+    // console.log(deckImageList);
     for (let i = 1; i < deckImageList.length; i++) {
         let currentImage = path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '-' + out);
         if (i % 10 === 0) continue;
@@ -173,18 +190,29 @@ async function joinImageVertical(up, down, out) {
     return img;
 }
 
+function deleteTemp(id) {
+    for (let tempImage of tempImageList) {
+        fs.unlink(path.resolve(tempPath, "building", tempImage + id + '.png'), () => {
+        })
+    }
+    fs.unlink(path.resolve('deck-' + id + '.png'), () => {
+    })
+    fs.unlink(path.resolve('subDeck-' + id + '.png'), () => {
+    })
+}
+
 module.exports = {
     async downloadDeckImage(id) {
         let data = await downloadDeckData(id)
         if (data.deck_id !== undefined) {
             data['gameTitle'] = gameName[data.game_title_id]
             console.log('Found ' + data.gameTitle + ' deck ' + data.title);
-            console.log('Deck list :');
+            // console.log('Deck list :');
             let deckImageList = [];
             await downloadDeck(data.list, data.game_title_id, deckImageList);
             let subDeckImageList = [];
             if (data.sub_list.length > 0) {
-                console.log('Sub deck list :');
+                // console.log('Sub deck list :');
                 await downloadDeck(data.sub_list, data.game_title_id, subDeckImageList);
             }
             await buildDeckImage(deckImageList, 'deck-' + id.toUpperCase() + '.png');
@@ -201,6 +229,7 @@ module.exports = {
                 await subDeck[0].makePublic()
                 data['subDeckImageUrl'] = subDeck[0].publicUrl()
             }
+            deleteTemp(id.toUpperCase());
             return data
             // await fs.unlinkSync(path.resolve(tempPath, 'building'));
         } else {
