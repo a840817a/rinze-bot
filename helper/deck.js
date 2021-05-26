@@ -6,6 +6,8 @@ const cheerio = require('cheerio')
 
 const firebase = require('../helper/firebase');
 
+sharp.cache(false);
+
 const tempPath = 'temp'
 
 const gameName = [
@@ -63,7 +65,7 @@ async function downloadCard(type, card, rotate = false, force) {
             if (rotate && card.direction === 1) image.rotate(90);
 
             if (!fs.existsSync(path.dirname(imageTempPath))) {
-                fs.mkdirSync(path.dirname(imageTempPath), {recursive: true});
+                await fs.promises.mkdir(path.dirname(imageTempPath), {recursive: true});
             }
             return image.toFile(imageTempPath);
         } catch (e) {
@@ -87,11 +89,11 @@ async function downloadDeck(deck, game_title_id, deckImageList) {
 }
 
 async function buildDeckImage(deckImageList, out) {
-    console.log(deckImageList);
+    // console.log(deckImageList);
     for (let i = 1; i < deckImageList.length; i++) {
         let currentImage = path.resolve(tempPath, 'building/row' + parseInt(i / 10) + '-' + out);
         if (i % 10 === 0) continue;
-        if (i % 10 === 1) currentImage = deckImageList[i - 1]
+        if (i % 10 === 1) currentImage = deckImageList[i - 1];
         await joinImageHorizontal(
             currentImage,
             deckImageList[i],
@@ -99,10 +101,10 @@ async function buildDeckImage(deckImageList, out) {
             out
         );
     }
-    await fs.copyFileSync(path.resolve(tempPath, 'building/row0' + '-' + out), out, fs.constants.COPYFILE_FICLONE);
+    await fs.promises.copyFile(path.resolve(tempPath, 'building/row0' + '-' + out), out, fs.constants.COPYFILE_FICLONE);
     for (let i = 1; i < deckImageList.length / 10; i++) {
         const currentImage = path.resolve(tempPath, 'building/row' + i + '-' + out);
-        let perImage = out
+        let perImage = out;
         if (i === 0) perImage = path.resolve(tempPath, 'building/row0' + '-' + out);
         await joinImageVertical(
             perImage,
@@ -117,11 +119,11 @@ async function joinImageHorizontal(left, right, out, id) {
     const r = path.resolve(tempPath, 'building/r-' + id);
 
     if (!fs.existsSync(path.dirname(l))) {
-        fs.mkdirSync(path.dirname(l), {recursive: true});
+        await fs.promises.mkdir(path.dirname(l), {recursive: true});
     }
 
-    await fs.copyFileSync(left, l, fs.constants.COPYFILE_FICLONE);
-    await fs.copyFileSync(right, r, fs.constants.COPYFILE_FICLONE);
+    await fs.promises.copyFile(left, l, fs.constants.COPYFILE_FICLONE);
+    await fs.promises.copyFile(right, r, fs.constants.COPYFILE_FICLONE);
 
     const leftData = await sharp(l).metadata();
     const rightData = await sharp(r).metadata();
@@ -145,8 +147,8 @@ async function joinImageHorizontal(left, right, out, id) {
         left: leftData.width
     }]).toFile(out);
 
-    await fs.unlinkSync(l);
-    await fs.unlinkSync(r);
+    await fs.promises.unlink(l);
+    await fs.promises.unlink(r);
 
     // return img;
 }
@@ -156,11 +158,12 @@ async function joinImageVertical(up, down, out) {
     const d = path.resolve(tempPath, 'building/d-' + out);
 
     if (!fs.existsSync(path.dirname(u))) {
-        fs.mkdirSync(path.dirname(u), {recursive: true});
+        await fs.promises.mkdir(path.dirname(u), {recursive: true});
     }
 
-    fs.copyFileSync(up, u, fs.constants.COPYFILE_FICLONE);
-    fs.copyFileSync(down, d, fs.constants.COPYFILE_FICLONE);
+    await fs.promises.copyFile(up, u, fs.constants.COPYFILE_FICLONE);
+    await fs.promises.copyFile(down, d, fs.constants.COPYFILE_FICLONE);
+
     const upData = await sharp(u).metadata();
     const downData = await sharp(d).metadata();
 
@@ -183,8 +186,8 @@ async function joinImageVertical(up, down, out) {
         left: 0
     }]).toFile(out);
 
-    await fs.unlinkSync(u);
-    await fs.unlinkSync(d);
+    await fs.promises.unlink(u);
+    await fs.promises.unlink(d);
 
     // return img;
 }
@@ -206,7 +209,7 @@ module.exports = {
         if (data.deck_id !== undefined) {
             data['gameTitle'] = gameName[data.game_title_id]
             console.log('Found ' + data.gameTitle + ' deck ' + data.title);
-            console.log(data);
+            // console.log(data);
             console.log('Deck list :');
             let deckImageList = [];
             await downloadDeck(data.list, data.game_title_id, deckImageList);
