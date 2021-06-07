@@ -2,13 +2,13 @@ const axios = require('axios');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
-const cheerio = require('cheerio')
+const cheerio = require('cheerio');
 
 const firebase = require('../helper/firebase');
 
 sharp.cache(false);
 
-const tempPath = 'temp'
+const tempPath = 'temp';
 
 const gameName = [
     '',
@@ -17,7 +17,7 @@ const gameName = [
     'フューチャーカード バディファイト',
     '',
     'Reバース for you'
-]
+];
 
 const gamePath = [
     '0',
@@ -26,7 +26,7 @@ const gamePath = [
     'Future-Card-Buddyfight',
     '4',
     'Rebirth-for-you'
-]
+];
 
 const imagePrefix = [
     '',
@@ -35,7 +35,7 @@ const imagePrefix = [
     'https://fc-buddyfight.com/wordpress/wp-content/images/card/',
     '',
     'https://s3-ap-northeast-1.amazonaws.com/rebirth-fy.com/wordpress/wp-content/images/cardlist/'
-]
+];
 
 const tempImageList = [
     'row0-deck-',
@@ -44,7 +44,7 @@ const tempImageList = [
     'row3-deck-',
     'row4-deck-',
     'row0-subDeck-',
-]
+];
 
 async function downloadDeckData(id) {
     let res = await axios.post('https://decklog.bushiroad.com/system/app/api/view/' + id, {},
@@ -69,7 +69,7 @@ async function downloadCard(type, card, rotate = false, force) {
             }
             return image.toFile(imageTempPath);
         } catch (e) {
-            throw e.response.data.error
+            throw e.response.data.error;
         }
     } else {
         console.log('Already downloaded, skipping ' + gamePath[type] + ' card ' + card.name);
@@ -80,12 +80,14 @@ async function downloadDeck(deck, game_title_id, deckImageList) {
     for (let card of deck) {
         // console.log(card.card_kind + ' card ' + card.name + ' X ' + card.num);
         for (let i = 0; i < card.num; i++) deckImageList.push(path.resolve(tempPath, gamePath[game_title_id], card.card_number.replace('/', '_') + '.png'));
+    }
+    await Promise.all(deck.map(async (card) => {
         try {
             await downloadCard(game_title_id, card, true);
         } catch (e) {
             console.error(e);
         }
-    }
+    }));
 }
 
 async function buildDeckImage(deckImageList, out) {
@@ -195,19 +197,19 @@ async function joinImageVertical(up, down, out) {
 function deleteTemp(id) {
     for (let tempImage of tempImageList) {
         fs.unlink(path.resolve(tempPath, "building", tempImage + id + '.png'), () => {
-        })
+        });
     }
     fs.unlink(path.resolve('deck-' + id + '.png'), () => {
-    })
+    });
     fs.unlink(path.resolve('subDeck-' + id + '.png'), () => {
-    })
+    });
 }
 
 module.exports = {
     async downloadDeckImage(id) {
-        let data = await downloadDeckData(id)
+        let data = await downloadDeckData(id);
         if (data.deck_id !== undefined) {
-            data['gameTitle'] = gameName[data.game_title_id]
+            data['gameTitle'] = gameName[data.game_title_id];
             console.log('Found ' + data.gameTitle + ' deck ' + data.title);
             // console.log(data);
             console.log('Deck list :');
@@ -221,26 +223,26 @@ module.exports = {
             await buildDeckImage(deckImageList, 'deck-' + id.toUpperCase() + '.png');
             let deck = await firebase.storage().upload('deck-' + id.toUpperCase() + '.png', {
                 destination: 'deck/deck-' + id.toUpperCase() + '.png',
-            })
+            });
             await deck[0].makePublic();
-            data['deckImageUrl'] = deck[0].publicUrl()
+            data['deckImageUrl'] = deck[0].publicUrl();
             if (subDeckImageList.length > 0) {
                 await buildDeckImage(subDeckImageList, 'subDeck-' + id.toUpperCase() + '.png');
                 let subDeck = await firebase.storage().upload('subDeck-' + id.toUpperCase() + '.png', {
                     destination: 'deck/subDeck-' + id.toUpperCase() + '.png',
-                })
-                await subDeck[0].makePublic()
-                data['subDeckImageUrl'] = subDeck[0].publicUrl()
+                });
+                await subDeck[0].makePublic();
+                data['subDeckImageUrl'] = subDeck[0].publicUrl();
             }
             deleteTemp(id.toUpperCase());
-            return data
+            return data;
             // await fs.unlinkSync(path.resolve(tempPath, 'building'));
         } else {
             throw 'Deck ' + id + ' not found!';
         }
     },
     async getWsCardDetail(id) {
-        const res = await axios.get("https://ws-tcg.com/cardlist/?cardno=" + id)
+        const res = await axios.get("https://ws-tcg.com/cardlist/?cardno=" + id);
 
         const page = cheerio.load(res.data);
 
