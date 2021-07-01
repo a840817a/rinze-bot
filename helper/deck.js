@@ -301,4 +301,4 @@ module.exports = {
             'Illustrator': cardDataTable.eq(12).find('td').eq(0).text()
         };
     }
-}
+};
