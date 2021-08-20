@@ -16,7 +16,7 @@ module.exports = {
             if (byScore[0] === bySpeed) byScore = byScore[1];
             else byScore = byScore[0];
 
-            message.channel.send({
+            message.reply({
                 files: [{
                     attachment: Buffer.from(bySpeed.OpenVPN_ConfigData_Base64, 'base64'),
                     name: bySpeed.HostName + '_' + bySpeed.IP + '.ovpn'

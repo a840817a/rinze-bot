@@ -11,7 +11,7 @@ module.exports = {
         let msg;
         try {
             let deckId = args[0].replace("https://decklog.bushiroad.com/view/", "")
-            msg = await message.channel.send('Loading Deck ' + deckId + ' ...');
+            msg = await message.reply('Loading Deck ' + deckId + ' ...');
             let deckData = await deck.downloadDeckImage(deckId);
             let out = deckData.gameTitle + ' Deck《' + deckData.title + '》(' + deckId + ')\n' + deckData.deckImageUrl
             if (deckData.subDeckImageUrl !== undefined) out += '\nSub Deck :\n' + deckData.subDeckImageUrl
