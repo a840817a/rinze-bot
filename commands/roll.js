@@ -23,6 +23,6 @@ module.exports = {
                 }
             })
         }
-        message.channel.send(out).catch(console.error);
+        message.reply(out).catch(console.error);
     },
 };

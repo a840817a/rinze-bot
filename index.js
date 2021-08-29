@@ -4,7 +4,14 @@ require('dotenv').config();
 
 const firebase = require('./helper/firebase');
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+    intents: [
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.DIRECT_MESSAGES,
+    ]
+});
+
 client.commands = new Discord.Collection();
 const prefix = process.env.PREFIX || '04';
 
@@ -20,7 +27,7 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', message => {
+client.on('messageCreate', message => {
     if (!(message.content.startsWith(prefix)) || message.author.bot) return;
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();

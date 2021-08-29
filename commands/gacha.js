@@ -26,7 +26,7 @@ module.exports = {
         console.log('' + ssrOdds + ' ' + srOdds);
         console.log(result);
 
-        message.channel.send(out)
+        message.reply(out)
             .then((msg) => {
                 updateMessage(msg, 1, result, ssrOdds, srOdds, back, ssr, sr, r);
             })
