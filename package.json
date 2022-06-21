@@ -8,11 +8,11 @@
   },
   "dependencies": {
     "axios": "0.27.2",
-    "cheerio": "1.0.0-rc.10",
-    "discord.js": "13.6.0",
+    "cheerio": "1.0.0-rc.11",
+    "discord.js": "13.8.0",
     "dotenv": "16.0.1",
-    "firebase-admin": "10.2.0",
+    "firebase-admin": "11.0.0",
     "joi": "17.6.0",
-    "sharp": "0.30.4"
+    "sharp": "0.30.6"
   }
 }
