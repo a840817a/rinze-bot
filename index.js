@@ -1,18 +1,19 @@
 const fs = require('fs');
-const Discord = require('discord.js');
+const {Client, GatewayIntentBits, Collection, Events} = require('discord.js');
 require('dotenv').config();
 
 const firebase = require('./helper/firebase');
 
-const client = new Discord.Client({
+const client = new Client({
     intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-        Discord.Intents.FLAGS.DIRECT_MESSAGES,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.MessageContent,
     ]
 });
 
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 const prefix = process.env.PREFIX || '04';
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -22,14 +23,22 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
-client.on('ready', () => {
+client.on(Events.ClientReady, () => {
     firebase.init();
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('messageCreate', message => {
-    if (!(message.content.startsWith(prefix)) || message.author.bot) return;
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
+client.on(Events.MessageCreate, message => {
+    if (message.author.bot) return;
+
+    let received = message.content;
+    if (message.content.startsWith(prefix)) {
+        received = received.slice(prefix.length).trim();
+    } else if (message.content.startsWith(`<@${client.user.id}>`)) {
+        received = received.slice(`<@${client.user.id}>`.length).trim();
+    } else return ;
+
+    const args = received.split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     const command = client.commands.get(commandName)
@@ -65,3 +74,18 @@ client.login(process.env.DISCORD_BOT_TOKEN).then(() => {
         console.log(`Unavailable to start bot, check your DISCORD_BOT_TOKEN`);
         process.exit(1);
     });
+
+////////////////////////
+//  For Health Check  //
+////////////////////////
+
+const http = require('http');
+const port = process.env.PORT || 3001;
+
+const server = http.createServer(function (req, res) {
+    res.writeHead(200,{'Content-Type':'text/plain'});
+    res.write('Rinze is good !!');
+    res.end();
+});
+
+server.listen(port);
