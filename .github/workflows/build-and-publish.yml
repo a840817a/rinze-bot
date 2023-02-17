@@ -44,7 +44,7 @@ jobs:
           context: ./Dockerfile
           # Note: tags has to be all lower-case
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_APP_NAME }}:latest 
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.DOCKER_APP_NAME }}:latest 
             ${{ secrets.JFROG_URL }}/docker/${{ secrets.JFROG_APP_NAME }}:latest
           # build on feature branches, push only on main branch
           push: true
