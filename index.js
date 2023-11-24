@@ -25,10 +25,13 @@ app.post('/discordInteractions', verifyKeyMiddleware(process.env.DISCORD_BOT_PUB
 })
 
 app.get('/discordSetCommand', function (req, res) {
+    let commands = [];
     for (const file of commandFiles) {
         const {metadata} = require(`./commands/${file}`);
-        SetGlobalCommand(metadata).catch(console.error);
+        commands.push(metadata)
     }
+    SetGlobalCommand(commands).catch(console.error);
+    res.send(':D');
 })
 
 const port = process.env.PORT || 3001;
