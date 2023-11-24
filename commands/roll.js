@@ -1,28 +1,44 @@
-const dice = require('../helper/dice');
+import {InteractionResponseType} from "discord-interactions";
 
-module.exports = {
+const dice = require('../helper/dice');
+const {CommandOptionType} = require("../helper/discord");
+
+export const metadata = {
     name: 'roll',
-    aliases: ['dice', 'd', 'r'],
     description: 'Roll dice!',
-    guildOnly: false,
-    args: true,
-    usage: '<dice>',
-    execute(message, args) {
-        let out = '';
-        let serika0v0 = message.client.emojis.cache.get('647072487397392385').toString() || '0 ^ 0';
-        if (args.length > 10) {
-            out = out.concat(serika0v0, '\n');
-        } else {
-            console.log(args);
-            args.forEach(element => {
-                try {
-                    out = out.concat(dice.roll(element), '\n');
-                } catch (e) {
-                    console.log(e);
-                    out = out.concat(serika0v0, '\n');
-                }
-            })
+    options: [
+        {
+            name: 'dice',
+            description: 'Dice',
+            type: CommandOptionType.STRING,
+            required: true
         }
-        message.reply(out).catch(console.error);
-    },
-};
+    ]
+}
+
+export function execute(request, response) {
+    let out = '';
+    let serika0v0 = '0 ^ 0';
+    let args = request.data.options.find((option) => option.name === 'dice').split(/ +/);
+
+    if (args.length > 10) {
+        out = out.concat(serika0v0, '\n');
+    } else {
+        console.log(args);
+        args.forEach(element => {
+            try {
+                out = out.concat(dice.roll(element), '\n');
+            } catch (e) {
+                console.log(e);
+                out = out.concat(serika0v0, '\n');
+            }
+        })
+    }
+
+    response.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+            content: out,
+        },
+    });
+}

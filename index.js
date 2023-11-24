@@ -1,10 +1,13 @@
 const fs = require('fs');
 const express = require('express');
-const {verifyKeyMiddleware, InteractionType, InteractionResponseType} = require('discord-interactions');
-const axios = require("axios");
+const {verifyKeyMiddleware, InteractionType} = require('discord-interactions');
+
+const firebase = require("./helper/firebase");
+const {SetGlobalCommand} = require("./helper/discord");
 require('dotenv').config();
 
 const app = express();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 app.get('/', function (req, res) {
     res.send(':)')
@@ -14,21 +17,24 @@ app.post('/discordInteractions', verifyKeyMiddleware(process.env.DISCORD_BOT_PUB
     const message = req.body;
     console.log(message);
     if (message.type === InteractionType.APPLICATION_COMMAND) {
-        res.send({
-            type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: {
-                content: 'Hello world',
-            },
-        });
+        if (commandFiles.includes(message.data.name + '.js')) {
+            const {execute} = require(`./commands/${message.data.name}.js`);
+            execute(req, res);
+        }
     }
 })
 
-app.put('/discordAddSlashCommand', function (req, res) {
-    axios.get()
+app.get('/discordSetCommand', function (req, res) {
+    for (const file of commandFiles) {
+        const {metadata} = require(`./commands/${file}`);
+        SetGlobalCommand(metadata).catch(console.error);
+    }
 })
 
 const port = process.env.PORT || 3001;
 app.listen(port);
+
+firebase.init();
 
 ////////////////////////
 //  For OLD           //
