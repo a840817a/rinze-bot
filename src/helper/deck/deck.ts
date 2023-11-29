@@ -26,7 +26,7 @@ async function downloadDeckData(id: string) {
     return res.data as DeckData;
 }
 
-async function downloadCard(type: number, card: CardData, force: boolean, rotate = false) {
+async function downloadCard(type: number, card: CardData, rotate = false, force: boolean = false) {
     const imageTempPath = path.resolve(tempPath, gamePath[type], card.card_number.replace('/', '_') + '.png');
 
     if (force || !fs.existsSync(imageTempPath)) {
