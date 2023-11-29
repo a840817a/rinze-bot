@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 # (Install OS dependencies; include -dev packages if needed.)
 
 # Install the Javascript dependencies, including all devDependencies.
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarnrc.yml ./
 RUN yarn install --immutable --immutable-cache
 
 # Copy the rest of the application in and build it.
@@ -23,8 +23,8 @@ WORKDIR /usr/src/app
 # (Install OS dependencies; just libraries.)
 
 # Install the Javascript dependencies, only runtime libraries.
-COPY package.json yarn.lock ./
-RUN yarn workspaces focus --production
+COPY package.json yarn.lock .yarnrc.yml  ./
+RUN yarn install --production
 
 # Copy the dist tree from the first stage.
 COPY --from=build /usr/src/app/dist .

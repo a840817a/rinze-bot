@@ -8,8 +8,6 @@ import {SetGlobalCommand} from "./helper/discord/functions";
 import {ApplicationCommand} from "./helper/discord/structure/applicationCommand";
 import {InteractionType} from "./helper/discord/structure/interaction";
 
-require('dotenv').config();
-
 const app = express();
 const commandFiles = fs.readdirSync(path.join(__dirname, './commands')).filter(file => file.endsWith('.js'));
 
@@ -42,3 +40,4 @@ const port = process.env.PORT || 3001;
 app.listen(port);
 
 initFirebase();
+console.log('server started!');
