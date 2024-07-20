@@ -26,7 +26,7 @@ RUN corepack enable
 
 # Install the Javascript dependencies, only runtime libraries.
 COPY package.json yarn.lock .yarnrc.yml  ./
-RUN yarn install --production
+RUN yarn workspaces focus --production
 
 # Copy the dist tree from the first stage.
 COPY --from=build /usr/src/app/dist .
