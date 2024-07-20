@@ -1,5 +1,5 @@
 # First stage: compile things.
-FROM node:21-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /usr/src/app
 
 # (Install OS dependencies; include -dev packages if needed.)
@@ -16,7 +16,7 @@ RUN yarn build
 # Now /usr/src/app/dist has the built files.
 
 # Second stage: run things.
-FROM node:21-alpine
+FROM node:22-alpine
 ENV NODE_ENV production
 WORKDIR /usr/src/app
 
