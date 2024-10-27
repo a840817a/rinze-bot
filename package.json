@@ -8,18 +8,18 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "axios": "1.7.2",
-    "cheerio": "1.0.0-rc.12",
-    "discord-interactions": "4.0.0",
-    "express": "5.0.0-beta.3",
-    "firebase-admin": "12.2.0",
+    "axios": "1.7.7",
+    "cheerio": "1.0.0",
+    "discord-interactions": "4.1.0",
+    "express": "5.0.0",
+    "firebase-admin": "12.7.0",
     "joi": "17.13.3",
-    "sharp": "0.33.4"
+    "sharp": "0.33.5"
   },
   "devDependencies": {
-    "@types/node": "20.14.11",
+    "@types/node": "22.8.1",
     "ts-node": "10.9.2",
-    "typescript": "5.5.4"
+    "typescript": "5.6.3"
   },
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "yarn@4.4.1"
 }
