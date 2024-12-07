@@ -18,7 +18,7 @@ RUN yarn build
 
 # Second stage: run things.
 FROM node:22-alpine
-ENV NODE_ENV production
+ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
 # (Install OS dependencies; just libraries.)
@@ -33,4 +33,4 @@ COPY --from=build /usr/src/app/dist .
 
 # Run the built application when the container starts.
 #EXPOSE 3001
-CMD node index.js
+CMD ["node", "index.js"]
