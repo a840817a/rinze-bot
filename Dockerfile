@@ -3,7 +3,7 @@ FROM node:25-alpine AS build
 WORKDIR /usr/src/app
 
 # (Install OS dependencies; include -dev packages if needed.)
-RUN corepack enable
+RUN npm install -g yarn
 
 # Install the Javascript dependencies, including all devDependencies.
 COPY package.json yarn.lock .yarnrc.yml ./
@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 WORKDIR /usr/src/app
 
 # (Install OS dependencies; just libraries.)
-RUN corepack enable
+RUN npm install -g yarn
 
 # Install the Javascript dependencies, only runtime libraries.
 COPY package.json yarn.lock .yarnrc.yml  ./
