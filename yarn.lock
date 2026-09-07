@@ -675,10 +675,59 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/body-parser@npm:*":
+  version: 1.19.6
+  resolution: "@types/body-parser@npm:1.19.6"
+  dependencies:
+    "@types/connect": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10c0/542da05c924dce58ee23f50a8b981fee36921850c82222e384931fda3e106f750f7880c47be665217d72dbe445129049db6eb1f44e7a06b09d62af8f3cca8ea7
+  languageName: node
+  linkType: hard
+
 "@types/caseless@npm:*":
   version: 0.12.5
   resolution: "@types/caseless@npm:0.12.5"
   checksum: 10c0/b1f8b8a38ce747b643115d37a40ea824c658bd7050e4b69427a10e9d12d1606ed17a0f6018241c08291cd59f70aeb3c1f3754ad61e45f8dbba708ec72dde7ec8
+  languageName: node
+  linkType: hard
+
+"@types/connect@npm:*":
+  version: 3.4.38
+  resolution: "@types/connect@npm:3.4.38"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/2e1cdba2c410f25649e77856505cd60223250fa12dff7a503e492208dbfdd25f62859918f28aba95315251fd1f5e1ffbfca1e25e73037189ab85dd3f8d0a148c
+  languageName: node
+  linkType: hard
+
+"@types/express-serve-static-core@npm:^5.0.0":
+  version: 5.1.3
+  resolution: "@types/express-serve-static-core@npm:5.1.3"
+  dependencies:
+    "@types/node": "npm:*"
+    "@types/qs": "npm:*"
+    "@types/range-parser": "npm:*"
+    "@types/send": "npm:*"
+  checksum: 10c0/2312bf52f2c299fdaf3b0c60c6058dd102f7bb6ed721b6de94e334feead4a4e4b606717058400436aa841cd9499e6960a4e3d92dd2b00220a6c1435ea5fdb5e1
+  languageName: node
+  linkType: hard
+
+"@types/express@npm:^5.0.6":
+  version: 5.0.6
+  resolution: "@types/express@npm:5.0.6"
+  dependencies:
+    "@types/body-parser": "npm:*"
+    "@types/express-serve-static-core": "npm:^5.0.0"
+    "@types/serve-static": "npm:^2"
+  checksum: 10c0/f1071e3389a955d4f9a38aae38634121c7cd9b3171ba4201ec9b56bd534aba07866839d278adc0dda05b942b05a901a02fd174201c3b1f70ce22b10b6c68f24b
+  languageName: node
+  linkType: hard
+
+"@types/http-errors@npm:*":
+  version: 2.0.5
+  resolution: "@types/http-errors@npm:2.0.5"
+  checksum: 10c0/00f8140fbc504f47356512bd88e1910c2f07e04233d99c88c854b3600ce0523c8cd0ba7d1897667243282eb44c59abb9245959e2428b9de004f93937f52f7c15
   languageName: node
   linkType: hard
 
@@ -708,6 +757,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/qs@npm:*":
+  version: 6.15.1
+  resolution: "@types/qs@npm:6.15.1"
+  checksum: 10c0/1dfdbcb4cf2a8f66d57f0b9a9fe6b1c7091cb816687b6698c1351eaf31f62e412cea9b7453a9637b570cd5fad8dced527e5a9e69b4fcc6e318daacd8b749f094
+  languageName: node
+  linkType: hard
+
+"@types/range-parser@npm:*":
+  version: 1.2.7
+  resolution: "@types/range-parser@npm:1.2.7"
+  checksum: 10c0/361bb3e964ec5133fa40644a0b942279ed5df1949f21321d77de79f48b728d39253e5ce0408c9c17e4e0fd95ca7899da36841686393b9f7a1e209916e9381a3c
+  languageName: node
+  linkType: hard
+
 "@types/request@npm:^2.48.8":
   version: 2.48.13
   resolution: "@types/request@npm:2.48.13"
@@ -717,6 +780,25 @@ __metadata:
     "@types/tough-cookie": "npm:*"
     form-data: "npm:^2.5.5"
   checksum: 10c0/1c6798d926a6577f213dbc04aa09945590f260ea367537c20824ff337b0a49d56e5199a6a6029e625568d97c3bbb98908bdb8d9158eb421f70a0d03ae230ff72
+  languageName: node
+  linkType: hard
+
+"@types/send@npm:*":
+  version: 1.2.1
+  resolution: "@types/send@npm:1.2.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/7673747f8c2d8e67f3b1b3b57e9d4d681801a4f7b526ecf09987bb9a84a61cf94aa411c736183884dc762c1c402a61681eb1ef200d8d45d7e5ec0ab67ea5f6c1
+  languageName: node
+  linkType: hard
+
+"@types/serve-static@npm:^2":
+  version: 2.2.0
+  resolution: "@types/serve-static@npm:2.2.0"
+  dependencies:
+    "@types/http-errors": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10c0/a3c6126bdbf9685e6c7dc03ad34639666eff32754e912adeed9643bf3dd3aa0ff043002a7f69039306e310d233eb8e160c59308f95b0a619f32366bbc48ee094
   languageName: node
   linkType: hard
 
@@ -2581,6 +2663,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "rinze-bot@workspace:."
   dependencies:
+    "@types/express": "npm:^5.0.6"
     "@types/node": "npm:26.4.0"
     axios: "npm:1.20.0"
     cheerio: "npm:1.2.0"
